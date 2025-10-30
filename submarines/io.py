@@ -1,27 +1,46 @@
-from game import validating_or_terminating_key
-from board import check_not_to_match_subs
+import sys
 
 
+def validating_or_terminating_key(key: str, is_coordinate: bool = False):
+    """In every input of the game if the player presses '*' the game stops."""
+    if key == "*":
+        print("Exiting the game.....")
+        sys.exit()
+    while not key.isnumeric():
+        key = input("You entered a non numeric value please try again: ")
+        if key == "*":
+            print("Exiting the game.....")
+            sys.exit()
+
+    value = int(key)
+    if is_coordinate:
+        return value - 1
+    return value
 
 
 def choosing_number_of_shots() -> int:
     choise = input("\nPlease choose an number of shots for the game:"
                    "\n -> ")
     return validating_or_terminating_key(choise)
-
-def choosing_number_of_subs() -> int:
+ 
+def choosing_number_of_subs(board_size: int) -> int:
     choise = input("\nPlease choose an number of submarines for the game:"
                    "\n->  ")
     choise = validating_or_terminating_key(choise)
     while not check_not_to_match_subs(board_size, choise):
         choise = input("The number of submarines is too high for the size of the board, " \
                        "\nplease choose a lower number of submarines -> ")
+        choise = validating_or_terminating_key(choise)
     return choise
 
 def choosing_size_of_board() -> int:
-    choise = input("\nPlease choose the size of the board for the game:"
+    choise = input("\nPlease choose the size of the board for the game (e.g., 5 for a 5x5 board):"
                    "\nChoose one Number for 'Num * Num' board -> ")
     return validating_or_terminating_key(choise)
+
+
+def check_not_to_match_subs(size_board: int, number_subs: int) -> bool:
+    return (size_board ** 2) / 2 >= number_subs
 
 
 def show_current_board(board: list):
@@ -30,8 +49,8 @@ def show_current_board(board: list):
         for value in row:
             if value == 1:
                 print(0, end=" | ")
-                continue
-            print(value, end=" | ")
+            else:
+                print(value, end=" | ")
         print()
     print()
 
@@ -68,7 +87,3 @@ def show_complete_board(board: list):
             print(value, end=" | ")
         print()
     print()
-
-
-
-

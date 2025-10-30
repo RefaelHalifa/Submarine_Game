@@ -1,6 +1,15 @@
-from game import *
+from submarines.io import validating_or_terminating_key
 
 
+def get_shot_coordinates(board_size: int) -> tuple[int, int]:
+    """Gets and validates shot coordinates from the user."""
+    while True:
+        shot_x = validating_or_terminating_key(input("Shot X -> "), is_coordinate=True)
+        shot_y = validating_or_terminating_key(input("Shot Y -> "), is_coordinate=True)
+        if check_inbounds_shot(board_size, shot_x, shot_y):
+            return shot_x, shot_y
+        else:
+            print("You are out of the board please try again:")
 
 
 def making_board(board_size: int) -> list[list[int]]:
@@ -14,31 +23,25 @@ def making_board(board_size: int) -> list[list[int]]:
     return board
 
 
-def taking_shot(board: list, shots: int, shot_x: int, shot_y: int):
+def taking_shot(board: list, shots: int) -> int:
     """Taking one shot and updating the board."""
-    print(f"Please Choose the coordinates for the shot:
-          \nYour remaining shots are {shots}:")
-    shot_x = validating_or_terminating_key(input("Shot X -> "))
-    shot_y = validating_or_terminating_key(input("Shot Y -> "))
-    shot_x, shot_y = check_inbounds_shot(len(board), shot_x, shot_y)
+    print(f"Please Choose the coordinates for the shot:\nYour remaining shots are {shots}:")
+    board_size = len(board)
+
     while True:
+        shot_x, shot_y = get_shot_coordinates(board_size)
+
         if board[shot_y][shot_x] == 0:
             board[shot_y][shot_x] = "x"
             print("Bad Shot!!, You Missed...")
-            shots -= 1
-            return shots
+            return shots - 1
         elif board[shot_y][shot_x] == 1:
             board[shot_y][shot_x] = "v"
             print("Good Shot!!!, You Hit A Submarine.")
-            shots -= 1
-            return shots
+            return shots - 1
         else:
             print("You have already make a shot it this coordinates, please try again:"
                   "\n-- For terminating the game please press '*' --")
-            shot_x = validating_or_terminating_key(input("Shot X -> "))
-            shot_y = validating_or_terminating_key(input("Shot Y -> "))
-            shot_x, shot_y = check_inbounds_shot(len(board), shot_x, shot_y)
-
 
 
 def check_remaining_subs(board: list) -> bool:
@@ -52,28 +55,5 @@ def check_remaining_subs(board: list) -> bool:
 
 
 def check_inbounds_shot(size_board: int, shot_x: int, shot_y: int) -> bool:
-    while not (shot_x < size_board and shot_y < size_board)
-        print("You are out of the board please try again:")
-        shot_x = validating_or_terminating_key(input("Shot X -> "))
-        shot_y = validating_or_terminating_key(input("Shot Y -> "))
-    return shot_x, shot_y
-    
-
-
-def check_not_to_match_subs(size_board: int, number_subs: int) -> bool:
-    return (size_board ** 2) / 2 >= number_subs
-
-
-
-
-
-
-
-
-
-
-
-
-
-# for i in making_board_bool(5):
-#     print(*(str(j) for j in i))
+    """Checks if shot is inside the board boundaries."""
+    return 0 <= shot_x < size_board and 0 <= shot_y < size_board
